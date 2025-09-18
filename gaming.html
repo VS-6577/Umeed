@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>STEM Games</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #fceabb, #f8b500);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: #222;
+      color: white;
+      padding: 20px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+    }
+    .sidebar h2 {
+      margin-top: 0;
+      font-size: 22px;
+      text-align: center;
+    }
+    .total-stars {
+      font-size: 1.2em;
+      margin-top: 15px;
+      background: #444;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    /* Main content */
+    .main {
+      flex: 1;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .card h3 {
+      margin-top: 0;
+      color: #f39c12;
+    }
+    .card button {
+      margin-top: 10px;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #f39c12;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .card button:hover {
+      background: #d35400;
+    }
+
+    /* Quiz modal */
+    .quiz-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .quiz-box h2 {
+      margin-top: 0;
+    }
+    .quiz-box button {
+      margin-top: 10px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 6px;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .quiz-box button:hover {
+      background: #2980b9;
+    }
+
+    #quizOptions button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      background: #f1c40f;
+      color: #222;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    #quizOptions button:hover {
+      background: #d68910;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>Progress</h2>
+    <div class="total-stars">⭐ Total Stars: <span id="totalStars">0</span></div>
+  </div>
+
+  <div class="main">
+    <h1>🎮 Quiz Buzz</h1>
+    <div class="categories" id="gamesContainer"></div>
+  </div>
+
+  <!-- Quiz Modal -->
+  <div class="quiz-modal" id="quizModal">
+    <div class="quiz-box">
+      <h2 id="quizTitle"></h2>
+      <div id="quizProgressBar" style="height:10px; background:#ddd; border-radius:5px; margin-bottom:10px;">
+        <div id="quizProgressFill" style="height:100%; width:0%; background:#3498db; border-radius:5px;"></div>
+      </div>
+      <p id="quizQuestion"></p>
+      <div id="quizOptions"></div>
+      <button id="nextBtn" style="display:none;">Next</button>
+    </div>
+  </div>
+
+  <script>
+    const games = {
+      // Maths 6-8
+      "Maths (6-8)": [
+        {q:"Simplify: 3/4+2/4",a:"5/4",options:["5/4","1","2","7/4"]},
+        {q:"12×8=?",a:"96",options:["96","86","108","88"]},
+        {q:"20% of 150",a:"30",options:["25","20","30","35"]},
+        {q:"Square of 15",a:"225",options:["200","215","225","250"]},
+        {q:"2^3=?",a:"8",options:["4","6","8","9"]},
+        {q:"144÷12=?",a:"12",options:["11","13","12","14"]},
+        {q:"LCM of 6 & 8",a:"24",options:["12","18","24","30"]},
+        {q:"HCF of 24 & 36",a:"12",options:["6","12","18","24"]},
+        {q:"50-27=?",a:"23",options:["21","22","23","25"]},
+        {q:"π≈?",a:"3.14",options:["3","3.14","3.2","3.5"]}
+      ],
+      // Maths 9-10
+      "Maths (9-10)": [
+        {q:"Solve: 2x+3=7",a:"2",options:["1","2","3","4"]},
+        {q:"(x+2)(x+3)",a:"x²+5x+6",options:["x²+5x+6","x²+6x+5","x²+2x+3","x²+3x+2"]},
+        {q:"Slope of y=2x+1?",a:"2",options:["1","2","-2","0"]},
+        {q:"Area of circle r=7",a:"154",options:["154","44","77","49"]},
+        {q:"√144",a:"12",options:["10","12","14","16"]},
+        {q:"Value of log10(100)",a:"2",options:["1","2","3","10"]},
+        {q:"Roots of x²-9=0",a:"±3",options:["±3","3","-3","±9"]},
+        {q:"AP 2,4,6… 10th term?",a:"20",options:["18","20","22","24"]},
+        {q:"sin²θ+cos²θ=?",a:"1",options:["0","1","2","θ"]},
+        {q:"Volume of cube side=5",a:"125",options:["100","125","150","25"]}
+      ],
+      // Maths 11-12
+      "Maths (11-12)": [
+        {q:"d/dx (x²)",a:"2x",options:["2x","x","x²","1"]},
+        {q:"∫x dx",a:"x²/2+C",options:["x²/2+C","x+C","2x+C","lnx"]},
+        {q:"Limit x→0 sinx/x",a:"1",options:["0","1","-1","∞"]},
+        {q:"Derivative of sinx",a:"cosx",options:["cosx","-cosx","sinx","-sinx"]},
+        {q:"dy/dx of e^x",a:"e^x",options:["x","e^x","1","lnx"]},
+        {q:"∫1/x dx",a:"ln|x|+C",options:["ln|x|+C","1/x","x","e^x"]},
+        {q:"d/dx (tanx)",a:"sec²x",options:["sec²x","cotx","cosec²x","cosx"]},
+        {q:"Solve: ∫cosx dx",a:"sinx+C",options:["cosx+C","sinx+C","-sinx+C","tanx+C"]},
+        {q:"Limit x→∞ (1+1/x)^x",a:"e",options:["1","e","∞","0"]},
+        {q:"If f(x)=x³, f'(2)=",a:"12",options:["6","8","12","16"]}
+      ],
+      // Science 6-8
+      "Science (6-8)": [
+        {q:"Organ pumps blood?",a:"Heart",options:["Lungs","Kidney","Heart","Brain"]},
+        {q:"Photosynthesis organ?",a:"Leaves",options:["Roots","Stem","Leaves","Flowers"]},
+        {q:"Water boils at?",a:"100°C",options:["80°C","90°C","100°C","110°C"]},
+        {q:"Largest planet?",a:"Jupiter",options:["Mars","Earth","Jupiter","Saturn"]},
+        {q:"Human adult teeth?",a:"32",options:["30","32","34","36"]},
+        {q:"Gas exhaled?",a:"Carbon dioxide",options:["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"]},
+        {q:"Energy of motion?",a:"Kinetic",options:["Potential","Thermal","Kinetic","Light"]},
+        {q:"Planet with rings?",a:"Saturn",options:["Venus","Mars","Earth","Saturn"]},
+        {q:"Smallest bone?",a:"Stapes",options:["Rib","Stapes","Femur","Ulna"]},
+        {q:"Brain protected by?",a:"Skull",options:["Skin","Skull","Spine","Hair"]}
+      ],
+      // Science 9-10
+      "Science (9-10)": [
+        {q:"Symbol of Sodium?",a:"Na",options:["So","Na","S","N"]},
+        {q:"Valency of Carbon?",a:"4",options:["2","3","4","5"]},
+        {q:"Newton's 2nd law: F=?",a:"ma",options:["m+a","ma","mv","m/v"]},
+        {q:"Ohm's law V=?",a:"IR",options:["VI","IR","VR","I/R"]},
+        {q:"Acid in vinegar?",a:"Acetic acid",options:["HCl","Acetic acid","Citric acid","Sulfuric acid"]},
+        {q:"DNA discovered by?",a:"Watson & Crick",options:["Newton","Darwin","Watson & Crick","Curie"]},
+        {q:"Speed formula?",a:"d/t",options:["t/d","d+t","d/t","dt"]},
+        {q:"SI unit of Force?",a:"Newton",options:["Joule","Pascal","Newton","Watt"]},
+        {q:"pH of neutral sol?",a:"7",options:["1","7","14","0"]},
+        {q:"Gas for respiration?",a:"Oxygen",options:["CO2","Oxygen","Hydrogen","Nitrogen"]}
+      ],
+      // Science 11-12
+      "Science (11-12)": [
+        {q:"Avogadro's no ≈?",a:"6.022e23",options:["6.022e22","6.022e23","6.022e24","6.022e25"]},
+        {q:"Faraday's law relates?",a:"Magnetic flux & EMF",options:["Heat & Temp","Mag flux & EMF","Mass & Energy","Light & Prism"]},
+        {q:"d/dt momentum=?",a:"Force",options:["Work","Energy","Power","Force"]},
+        {q:"Speed of light?",a:"3e8 m/s",options:["3e8 m/s","3e6","3e10","3e5"]},
+        {q:"Acid in stomach?",a:"HCl",options:["H2SO4","HCl","HNO3","CH3COOH"]},
+        {q:"Unit of Power?",a:"Watt",options:["Joule","Newton","Watt","Pascal"]},
+        {q:"Charge of electron?",a:"-1",options:["-1","0","1","+2"]},
+        {q:"Einstein's equation?",a:"E=mc²",options:["E=mc","E=mc²","E=mv²","F=ma"]},
+        {q:"Bond in H2O?",a:"Covalent",options:["Ionic","Hydrogen","Covalent","Metallic"]},
+        {q:"Plant tissue for transport?",a:"Xylem & Phloem",options:["Cortex","Epidermis","Xylem & Phloem","Mesophyll"]}
+      ],
+      // Coding 6-8
+      "Coding (6-8)": [
+        {q:"Binary of 2?",a:"10",options:["01","10","11","100"]},
+        {q:"Loop repeats?",a:"Instructions",options:["Data","Instructions","Functions","Events"]},
+        {q:"HTML stands for?",a:"HyperText Markup Language",options:["HighText Machine Language","HyperText Markup Language","HyperTool Multi Language","None"]},
+        {q:"1 byte = ?",a:"8 bits",options:["4 bits","8 bits","16 bits","32 bits"]},
+        {q:"Python symbol for power?",a:"**",options:["^","**","*","//"]},
+        {q:"Value of True+False?",a:"1",options:["0","1","2","Error"]},
+        {q:"Which is input device?",a:"Keyboard",options:["Printer","Monitor","Keyboard","Speaker"]},
+        {q:"Scratch used for?",a:"Visual programming",options:["Games only","Math only","Visual programming","None"]},
+        {q:"First step in algorithm?",a:"Define problem",options:["Code","Test","Define problem","Compile"]},
+        {q:"Flowchart uses?",a:"Shapes",options:["Shapes","Numbers","Music","Colors"]}
+      ],
+      // Coding 9-10
+      "Coding (9-10)": [
+        {q:"C is?",a:"Programming language",options:["Hardware","OS","Programming language","DBMS"]},
+        {q:"int a=5; type?",a:"Integer",options:["Float","Integer","Char","Double"]},
+        {q:"Array stores?",a:"Same type elements",options:["Different types","Same type elements","Only chars","Only int"]},
+        {q:"Java created by?",a:"James Gosling",options:["Newton","James Gosling","Bill Gates","Elon Musk"]},
+        {q:"for loop used for?",a:"Iteration",options:["Condition","Iteration","Decision","Storage"]},
+        {q:"Operator for AND in C?",a:"&&",options:["&","&&","and","||"]},
+        {q:"Database query lang?",a:"SQL",options:["C","SQL","Python","HTML"]},
+        {q:"0/0 in programming?",a:"Error",options:["0","Error","∞","Undefined"]},
+        {q:"char size in C?",a:"1 byte",options:["2","4","1 byte","8"]},
+        {q:"Python creator?",a:"Guido van Rossum",options:["Linus","Guido van Rossum","Dennis Ritchie","Babbage"]}
+      ],
+      // Coding 11-12
+      "Coding (11-12)": [
+        {q:"OOP means?",a:"Object Oriented Programming",options:["Over Oriented Prog","Object Oriented Programming","Only Obj Prog","None"]},
+        {q:"Inheritance in OOP?",a:"Deriving classes",options:["Copy code","Deriving classes","Delete classes","None"]},
+        {q:"SQL stands for?",a:"Structured Query Language",options:["Strong Query Language","Structured Query Language","Standard Quick Language","Simple Query Language"]},
+        {q:"Big O measures?",a:"Algorithm efficiency",options:["Memory","Algorithm efficiency","Data type","Compiler"]},
+        {q:"Recursion means?",a:"Function calls itself",options:["Loop","Function calls itself","Library","Module"]},
+        {q:"Stack follows?",a:"LIFO",options:["FIFO","LIFO","LILO","FILO"]},
+        {q:"Queue follows?",a:"FIFO",options:["LIFO","FIFO","LILO","None"]},
+        {q:"Python data type for text?",a:"str",options:["char","str","text","string"]},
+        {q:"Machine language uses?",a:"Binary",options:["Binary","English","Assembly","High level"]},
+        {q:"DBMS full form?",a:"Database Management System",options:["Database Manage Sys","Database Management System","Data Base Machine Software","None"]}
+      ]
+    };
+
+    const container = document.getElementById("gamesContainer");
+    const modal = document.getElementById("quizModal");
+    const quizTitle = document.getElementById("quizTitle");
+    const quizQuestion = document.getElementById("quizQuestion");
+    const quizOptions = document.getElementById("quizOptions");
+    const nextBtn = document.getElementById("nextBtn");
+    const totalStarsEl = document.getElementById("totalStars");
+    const progressFill = document.getElementById("quizProgressFill");
+
+    let currentGame = [], currentTitle = "", questionIndex = 0, score = 0;
+
+    function updateTotalStars() {
+      let total = 0;
+      for (let key in localStorage) {
+        if (key.startsWith("stars_")) total += parseInt(localStorage.getItem(key)) || 0;
+      }
+      totalStarsEl.textContent = total;
+    }
+
+    // Create game cards
+    Object.keys(games).forEach(title => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `<h3>${title}</h3><p>Play and earn stars!</p><button>Play</button>`;
+      card.querySelector("button").addEventListener("click", () => startGame(title));
+      container.appendChild(card);
+    });
+
+    function startGame(title) {
+      currentGame = [...games[title]].sort(() => 0.5 - Math.random()).slice(0, 10);
+      currentTitle = title;
+      questionIndex = 0;
+      score = 0;
+      modal.style.display = "flex";
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const q = currentGame[questionIndex];
+      quizTitle.textContent = `${currentTitle} (Q${questionIndex + 1}/10)`;
+      quizQuestion.textContent = q.q;
+      quizOptions.innerHTML = "";
+      nextBtn.style.display = "none";
+      progressFill.style.width = `${(questionIndex / 10) * 100}%`;
+
+      q.options.sort(() => 0.5 - Math.random()).forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => selectAnswer(btn, opt === q.a);
+        quizOptions.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(button, correct) {
+      Array.from(quizOptions.children).forEach(b => b.disabled = true);
+      if (correct) {
+        button.style.background = "#2ecc71"; // green
+        score++;
+      } else {
+        button.style.background = "#e74c3c"; // red
+        Array.from(quizOptions.children).forEach(b => {
+          if (b.textContent === currentGame[questionIndex].a) b.style.background = "#2ecc71";
+        });
+      }
+      nextBtn.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      questionIndex++;
+      if (questionIndex < currentGame.length) loadQuestion();
+      else endGame();
+    }
+
+    function endGame() {
+      modal.style.display = "none";
+      let stars = 0;
+      if (score >= 10) stars = 3;
+      else if (score >= 7) stars = 2;
+      else if (score >= 4) stars = 1;
+
+      alert(`You scored ${score}/10\n⭐ Earned Stars: ${stars}`);
+      localStorage.setItem("stars_" + currentTitle, stars);
+      updateTotalStars();
+    }
+
+    nextBtn.onclick = nextQuestion;
+    updateTotalStars();
+    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; }
+  </script>
+</body>
+</html>

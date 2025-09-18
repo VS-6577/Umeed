@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Umeed - Student Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f9f9f9;
+    }
+    header {
+      background: #FFD700;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h2 {
+      margin: 0;
+    }
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: black;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    nav a:hover {
+      color: white;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+      padding: 30px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .profile {
+      text-align: center;
+    }
+    .profile img {
+      width: 100px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+    .progress-bar {
+      background: #eee;
+      border-radius: 20px;
+      overflow: hidden;
+      height: 12px;
+      margin-top: 5px;
+    }
+    .progress {
+      height: 12px;
+      width: 0%;
+      background: #FFD700;
+      border-radius: 20px;
+      transition: width 1.5s ease;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>Umeed <small>Student Dashboard</small></h2>
+    <nav>
+      <a href="E:\Documents\index.html">Home</a>
+      <a href="E:\Documents\game.html">Games</a>
+      <a href="C:\Users\Vedika\Downloads\gaming.html">Quizzes</a>
+      <a onclick="logout()">Logout</a>
+    </nav>
+  </header>
+
+  <div class="dashboard">
+    <!-- Profile Section -->
+    <div class="card profile">
+      <img src="C:\Users\Vedika\Downloads\WhatsApp_Image_2025-07-12_at_19.10.06_af39a012-removebg-preview-removebg-preview.png" alt="Student Avatar">
+      <h3>Vedika Singh</h3>
+      <p><b>Class 10</b>, Section A</p>
+      <p><b>Roll No:</b> 23</p>
+    </div>
+
+    <!-- Courses & Progress -->
+    <div class="card">
+      <h3>📚 My Courses & Progress</h3>
+      <p>Science</p>
+      <div class="progress-bar"><div class="progress" style="width: 75%;"></div></div>
+      <p>Math</p>
+      <div class="progress-bar"><div class="progress" style="width: 60%;"></div></div>
+      <p>Coding</p>
+      <div class="progress-bar"><div class="progress" style="width: 85%;"></div></div>
+    </div>
+
+    <!-- Lectures -->
+    <div class="card">
+      <h3>🎥 Lectures</h3>
+      <ul>
+        <li>Science – Chapter 5: Photosynthesis</li>
+        <li>Math – Algebra Basics</li>
+        <li>Coding – Intro to JavaScript</li>
+      </ul>
+    </div>
+
+    <!-- Notes -->
+    <div class="card">
+      <h3>📒 Notes</h3>
+      <ul>
+        <li>Science – Chemical Reactions (PDF)</li>
+        <li>Math – Geometry Formulas (DOC)</li>
+        <li>Coding – Python Basics (PDF)</li>
+      </ul>
+    </div>
+
+    <!-- Tests -->
+    <div class="card">
+      <h3>📝 Tests</h3>
+      <ul>
+        <li>Math Quiz – Monday</li>
+        <li>Science Test – Wednesday</li>
+        <li>Coding Project – Friday</li>
+      </ul>
+    </div>
+
+    <!-- Upcoming Updates -->
+    <div class="card">
+      <h3>🔔 Upcoming Updates</h3>
+      <ul>
+        <li>Doubt Session – Sunday 5 PM</li>
+        <li>New Coding Lecture – Next Week</li>
+        <li>Science Revision Notes Uploading Soon</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    Powered by Umeed © 2025
+  </footer>
+
+  <script>
+    // Animate Progress Bars on Load
+    window.onload = function() {
+      let progresses = document.querySelectorAll('.progress');
+      progresses.forEach(p => {
+        let finalWidth = p.style.width;
+        p.style.width = "0%";
+        setTimeout(() => { p.style.width = finalWidth; }, 200);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nutrition Match Game — Fixed</title>
+
+  <!-- Inline CSS so you can immediately test whether styling works -->
+  <style>
+    :root {
+      --primary: #00796b;
+      --bg: #f0f9ff;
+      --card: #ffffff;
+      --correct: #c8e6c9;
+      --wrong: #ffcdd2;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      padding: 20px;
+    }
+    .container {
+      width: 100%;
+      max-width: 960px;
+      background: var(--card);
+      border-radius: 14px;
+      box-shadow: 0 6px 24px rgba(2, 6, 23, 0.08);
+      padding: 22px;
+    }
+    h1 { margin: 0 0 8px; font-size: 1.4rem; }
+    .match-container { display: flex; gap: 20px; margin-top: 18px; flex-wrap: wrap; }
+    .column { flex: 1; min-width: 260px; }
+    .column h3 { margin: 0 0 12px; font-size: 1.05rem; }
+    .item {
+      background: #e0f7fa;
+      padding: 10px 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      cursor: grab;
+      border: 1px solid #00796b;
+      user-select: none;
+    }
+    .item:active { cursor: grabbing; }
+    .drop-zone {
+      background: #fce4ec;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 2px dashed #ad1457;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      transition: transform .12s ease;
+    }
+    .drop-zone.correct { background: var(--correct); border-style: solid; border-color: #388e3c; }
+    .drop-zone.wrong { background: var(--wrong); border-style: solid; border-color: #d32f2f; }
+    .drop-zone.occupied { opacity: 0.9; }
+    .small { font-size: 0.9rem; color: #444; margin-top: 6px; }
+    button#langBtn {
+      padding: 8px 14px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    #result { margin-top: 18px; font-weight: 600; font-size: 1rem; color: #2e7d32; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="title">🍽 Match the Following: Nutrition in Animals</h1>
+    <button id="langBtn">Switch to Odia</button>
+
+    <div class="match-container">
+      <div class="column" id="left-column">
+        <h3 id="organsTitle">Organs / Processes</h3>
+        <div class="item" draggable="true" id="mouth">Mouth</div>
+        <div class="item" draggable="true" id="stomach">Stomach</div>
+        <div class="item" draggable="true" id="small-intestine">Small Intestine</div>
+        <div class="item" draggable="true" id="large-intestine">Large Intestine</div>
+        <div class="item" draggable="true" id="egestion">Egestion</div>
+      </div>
+
+      <div class="column" id="right-column">
+        <h3 id="functionsTitle">Functions</h3>
+        <div class="drop-zone" data-match="mouth" id="func-mouth">Chewing and mixing with saliva</div>
+        <div class="drop-zone" data-match="stomach" id="func-stomach">Breakdown using acid and enzymes</div>
+        <div class="drop-zone" data-match="small-intestine" id="func-small-intestine">Absorption of nutrients</div>
+        <div class="drop-zone" data-match="large-intestine" id="func-large-intestine">Absorption of water</div>
+        <div class="drop-zone" data-match="egestion" id="func-egestion">Removal of undigested food</div>
+      </div>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <!-- JavaScript (drag/drop + bilingual) -->
+  <script>
+    const translations = {
+      english: {
+        title: "🍽 Match the Following: Nutrition in Animals",
+        organsTitle: "Organs / Processes",
+        functionsTitle: "Functions",
+        mouth: "Mouth",
+        stomach: "Stomach",
+        smallIntestine: "Small Intestine",
+        largeIntestine: "Large Intestine",
+        egestion: "Egestion",
+        funcMouth: "Chewing and mixing with saliva",
+        funcStomach: "Breakdown using acid and enzymes",
+        funcSmall: "Absorption of nutrients",
+        funcLarge: "Absorption of water",
+        funcEgestion: "Removal of undigested food",
+        success: "🎉 Great job! You matched all correctly!"
+      },
+      odia: {
+        title: "🍽 ମିଳାଇବା: ପଶୁମାନଙ୍କର ପୋଷଣ",
+        organsTitle: "ଅଙ୍ଗ / ପ୍ରକ୍ରିୟା",
+        functionsTitle: "କାର୍ଯ୍ୟ",
+        mouth: "ମୁହଁ",
+        stomach: "ଉଦର",
+        smallIntestine: "ସ୍ମଲ୍ ଆନ୍ତ୍ର",
+        largeIntestine: "ଲାର୍ଜ ଆନ୍ତ୍ର",
+        egestion: "ବିସର୍ଜନ",
+        funcMouth: "ଚବାଇବା ଏବଂ ଲାଲା ସହିତ ମିଶିବା",
+        funcStomach: "ଆମ୍ଲ ଏବଂ ଏନଜାଇମ୍‌ ଦ୍ୱାରା ଭାଙ୍ଗିବା",
+        funcSmall: "ପୋଷକତତ୍ତ୍ୱର ଶୋଷଣ",
+        funcLarge: "ପାଣିର ଶୋଷଣ",
+        funcEgestion: "ଅପାଚ୍ୟ ଖାଦ୍ୟର ବିସର୍ଜନ",
+        success: "🎉 ଶାବାଶ! ସମସ୍ତକୁ ଠିକ୍‌ଭାବେ ମିଳାଇଲେ!"
+      }
+    };
+
+    let currentLang = "english";
+
+    // Map data-match key to translation field name
+    const funcKey = {
+      'mouth': 'funcMouth',
+      'stomach': 'funcStomach',
+      'small-intestine': 'funcSmall',
+      'large-intestine': 'funcLarge',
+      'egestion': 'funcEgestion'
+    };
+
+    const items = document.querySelectorAll(".item");
+    const dropZones = document.querySelectorAll(".drop-zone");
+    const resultDiv = document.getElementById("result");
+    let correctMatches = 0;
+    const totalMatches = items.length;
+
+    // make items draggable
+    items.forEach(item => {
+      item.addEventListener("dragstart", e => {
+        e.dataTransfer.setData("text/plain", e.target.id);
+      });
+    });
+
+    // drop zone handlers
+    dropZones.forEach(zone => {
+      // initialize dataset.func so language updates can use it
+      zone.dataset.filled = "false";
+
+      zone.addEventListener("dragover", e => {
+        e.preventDefault();
+      });
+
+      zone.addEventListener("drop", e => {
+        e.preventDefault();
+        if (zone.dataset.filled === "true") {
+          // quick feedback that zone is already filled
+          zone.classList.add("wrong");
+          setTimeout(() => zone.classList.remove("wrong"), 500);
+          return;
+        }
+
+        const draggedId = e.dataTransfer.getData("text/plain");
+        const correctId = zone.getAttribute("data-match");
+
+        if (draggedId === correctId) {
+          zone.classList.add("correct", "occupied");
+          zone.dataset.filled = "true";
+          // store matched item text so language toggle can still show it
+          const itemText = document.getElementById(draggedId).textContent;
+          zone.dataset.matchedItem = itemText;
+          // show matched item + function text
+          zone.innerHTML = `<strong>${itemText} ✅</strong><div class="small">${zone.dataset.func}</div>`;
+          // hide the dragged item so it can't be reused
+          document.getElementById(draggedId).classList.add("hidden");
+          correctMatches++;
+          if (correctMatches === totalMatches) {
+            resultDiv.textContent = translations[currentLang].success;
+          }
+        } else {
+          // wrong drop feedback
+          zone.classList.add("wrong");
+          setTimeout(() => zone.classList.remove("wrong"), 700);
+        }
+      });
+    });
+
+    // Language toggle
+    document.getElementById("langBtn").addEventListener("click", () => {
+      currentLang = currentLang === "english" ? "odia" : "english";
+      updateLanguage();
+    });
+
+    function updateLanguage() {
+      const t = translations[currentLang];
+      document.getElementById("title").textContent = t.title;
+      document.getElementById("organsTitle").textContent = t.organsTitle;
+      document.getElementById("functionsTitle").textContent = t.functionsTitle;
+
+      // items
+      document.getElementById("mouth").textContent = t.mouth;
+      document.getElementById("stomach").textContent = t.stomach;
+      document.getElementById("small-intestine").textContent = t.smallIntestine;
+      document.getElementById("large-intestine").textContent = t.largeIntestine;
+      document.getElementById("egestion").textContent = t.egestion;
+
+      // update drop zones (store the function text in dataset.func)
+      dropZones.forEach(zone => {
+        const key = zone.dataset.match; // e.g., 'mouth'
+        const funcField = funcKey[key]; // e.g., 'funcMouth'
+        zone.dataset.func = t[funcField];
+
+        if (zone.dataset.filled === "true") {
+          // keep the matched item text, but update the function line in current language
+          const matchedItem = zone.dataset.matchedItem || "";
+          zone.innerHTML = `<strong>${matchedItem} ✅</strong><div class="small">${zone.dataset.func}</div>`;
+        } else {
+          zone.textContent = zone.dataset.func;
+        }
+      });
+
+      // update button text and result message if already completed
+      document.getElementById("langBtn").textContent =
+        currentLang === "english" ? "Switch to Odia" : "Switch to English";
+
+      if (correctMatches === totalMatches) {
+        resultDiv.textContent = translations[currentLang].success;
+      }
+    }
+
+    // initial language populate
+    updateLanguage();
+  </script>
+</body>
+</html>

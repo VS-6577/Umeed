@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Graph Explorer - Trigonometry Game</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #FFD600;
+    }
+    #question {
+      margin: 15px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    #graph {
+      width: 90%;
+      max-width: 700px;
+      height: 400px;
+    }
+    #status, #score {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    #langBtn {
+      margin: 10px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      background: #FFD600;
+      color: #1a1a1a;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #langBtn:hover { background: #fce047; }
+  </style>
+</head>
+<body>
+
+  <h1 id="title">📈 Graph Explorer: Trigonometry</h1>
+  <button id="langBtn">Switch to Odia</button>
+  <p id="question"></p>
+  <div id="graph"></div>
+  <p id="status"></p>
+  <p id="score"></p>
+
+  <script>
+    // Generate sin(x) data
+    let xValues = [];
+    let yValues = [];
+    for (let deg = 0; deg <= 360; deg++) {
+      let rad = deg * Math.PI / 180;
+      xValues.push(deg);
+      yValues.push(Math.sin(rad));
+    }
+
+    // Plot graph
+    const trace = {
+      x: xValues,
+      y: yValues,
+      mode: 'lines',
+      name: 'sin(x)',
+      line: { color: '#FFD600', width: 3 }
+    };
+
+    const layout = {
+      xaxis: { title: "Angle (degrees)", range: [0, 360] },
+      yaxis: { title: "sin(x)", range: [-1.2, 1.2] },
+      margin: { t: 40 }
+    };
+
+    Plotly.newPlot('graph', [trace], layout);
+
+    // Translations
+    const translations = {
+      english: {
+        title: "📈 Graph Explorer: Trigonometry",
+        questions: [
+          "Click where sin(x) = 0.5",
+          "Click where sin(x) = 1",
+          "Click where sin(x) = 0",
+          "Click where sin(x) = -1",
+          "Click where sin(x) = √3/2"
+        ],
+        correct: (deg) => `✅ Correct! You clicked near ${deg}°`,
+        wrong: (deg, y) => `❌ Wrong! You clicked ${deg}°, sin(x) ≈ ${y}`,
+        gameOver: (score, total) => `Game Over 🎉 Final Score: ${score}/${total}`,
+        switchBtn: "Switch to Odia",
+        scoreLabel: (s) => `Score: ${s}`
+      },
+      odia: {
+        title: "📈 ଗ୍ରାଫ ଅନୁସନ୍ଧାନ: ତ୍ରିକୋଣମିତି",
+        questions: [
+          "sin(x) = 0.5 ଯେଉଁଥାନାରେ, ସେଥିରେ click କରନ୍ତୁ",
+          "sin(x) = 1 ଯେଉଁଥାନାରେ, ସେଥିରେ click କରନ୍ତୁ",
+          "sin(x) = 0 ଯେଉଁଥାନାରେ, ସେଥିରେ click କରନ୍ତୁ",
+          "sin(x) = -1 ଯେଉଁଥାନାରେ, ସେଥିରେ click କରନ୍ତୁ",
+          "sin(x) = √3/2 ଯେଉଁଥାନାରେ, ସେଥିରେ click କରନ୍ତୁ"
+        ],
+        correct: (deg) => `✅ ସଠିକ୍! ଆପଣ ${deg}° ନିକଟରେ click କରିଛନ୍ତି`,
+        wrong: (deg, y) => `❌ ଭୁଲ! ଆପଣ ${deg}° click କରିଛନ୍ତି, sin(x) ≈ ${y}`,
+        gameOver: (score, total) => `Game Over 🎉 ଅନ୍ତିମ ସ୍କୋର: ${score}/${total}`,
+        switchBtn: "Switch to English",
+        scoreLabel: (s) => `ସ୍କୋର: ${s}`
+      }
+    };
+
+    // Questions
+    const questions = [
+      { answers: [30, 150] },
+      { answers: [90] },
+      { answers: [0, 180, 360] },
+      { answers: [270] },
+      { answers: [60, 120] }
+    ];
+
+    let currentRound = 0;
+    let score = 0;
+    let currentLang = "english";
+
+    function loadQuestion() {
+      document.getElementById("title").innerText = translations[currentLang].title;
+      document.getElementById("question").innerText = translations[currentLang].questions[currentRound];
+      document.getElementById("status").innerText = "";
+      document.getElementById("score").innerText = translations[currentLang].scoreLabel(score);
+      document.getElementById("langBtn").innerText = translations[currentLang].switchBtn;
+    }
+
+    loadQuestion();
+
+    const graphDiv = document.getElementById('graph');
+    graphDiv.on('plotly_click', function(data){
+      const clickedX = data.points[0].x;
+      const clickedY = data.points[0].y.toFixed(2);
+
+      let correctAnswers = questions[currentRound].answers;
+      let isCorrect = correctAnswers.some(ans => Math.abs(clickedX - ans) < 10);
+
+      if (isCorrect) {
+        score += 2;
+        document.getElementById('status').innerText = translations[currentLang].correct(Math.round(clickedX));
+      } else {
+        score -= 1;
+        document.getElementById('status').innerText = translations[currentLang].wrong(Math.round(clickedX), clickedY);
+      }
+
+      currentRound++;
+      if (currentRound < questions.length) {
+        setTimeout(loadQuestion, 1500);
+      } else {
+        setTimeout(() => {
+          document.getElementById("question").innerText = translations[currentLang].gameOver(score, questions.length * 2);
+          document.getElementById("status").innerText = "";
+          document.getElementById("score").innerText = translations[currentLang].scoreLabel(score);
+        }, 1500);
+      }
+    });
+
+    // Language switch
+    document.getElementById("langBtn").addEventListener("click", () => {
+      currentLang = currentLang === "english" ? "odia" : "english";
+      loadQuestion();
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Umeed Student Profile</title>
+<style>
+body {
+  margin:0;
+  font-family:"Poppins", Arial, sans-serif;
+  background:#f9f9f9;
+  color:#222;
+}
+/* Header */
+header {
+  background:#FFD700;
+  padding:15px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 3px 6px rgba(0,0,0,0.1);
+}
+header h1 {
+  font-size:22px;
+  margin:0;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.logo-icon { width:28px; height:28px; }
+nav a {
+  margin:0 12px;
+  text-decoration:none;
+  color:#000;
+  font-weight:500;
+  transition:color 0.3s;
+  cursor:pointer;
+}
+nav a:hover { color:#444; }
+/* Container */
+.container {
+  display:grid;
+  grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
+  padding:25px;
+}
+/* Cards */
+.card {
+  background:#fff;
+  border-radius:15px;
+  padding:20px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+.card:hover { transform: translateY(-5px); }
+.card h2 {
+  margin:0 0 15px;
+  font-size:18px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+/* Profile Image */
+.profile-img-container {
+  text-align:center;
+  margin-bottom:15px;
+}
+.profile-img-container img {
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #FFD700;
+  cursor:pointer;
+  transition: transform 0.3s;
+}
+.profile-img-container img:hover { transform: scale(1.05); }
+/* Inputs */
+.profile-input {
+  width:100%;
+  padding:8px 10px;
+  margin:6px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:14px;
+}
+/* Buttons */
+.btn {
+  background:#FFD700;
+  border:none;
+  padding:8px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  margin:5px 0;
+  transition:background 0.3s, transform 0.2s;
+}
+.btn:hover {
+  background:#e6c200;
+  transform:scale(1.05);
+}
+/* Stats */
+.stats-container {
+  display:flex;
+  flex-wrap:wrap;
+  gap:15px;
+}
+.stat-card {
+  background:#FFF8DC;
+  border-radius:12px;
+  flex:1;
+  min-width:120px;
+  padding:12px;
+  text-align:center;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  transition:transform 0.3s;
+}
+.stat-card:hover { transform: translateY(-5px); }
+.stat-card h3 { margin:5px 0; font-size:16px; }
+.stat-card p { margin:0; font-size:14px; color:#555; }
+/* Progress Bar */
+.progress-bar {
+  background:#eee;
+  border-radius:15px;
+  height:12px;
+  overflow:hidden;
+  margin-top:6px;
+}
+.progress {
+  height:100%;
+  border-radius:15px;
+  transition:width 1.2s ease-in-out;
+  background:#4CAF50;
+}
+/* Settings Toggle */
+.setting-label { display:flex; justify-content:space-between; align-items:center; margin:10px 0; font-size:14px; }
+.setting-toggle { width:40px; height:20px; position:relative; display:inline-block; }
+.setting-toggle input { opacity:0; width:0; height:0; }
+.slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#ccc; border-radius:34px; transition:.4s; }
+.slider:before { position:absolute; content:""; height:16px; width:16px; left:2px; bottom:2px; background:white; border-radius:50%; transition:.4s; }
+input:checked + .slider { background:#2196F3; }
+input:checked + .slider:before { transform:translateX(20px); }
+footer { text-align:center; padding:20px; font-size:14px; color:#555; }
+</style>
+</head>
+<body>
+<header>
+<h1><img src="icon.png" class="logo-icon" alt="Logo"/> Profile</h1>
+<nav>
+<a href="E:\Documents\index.html">Home</a>
+<a href="E:\Documents\My courses.html">My Courses</a>
+<a href="E:\Documents\game.html">Games</a>
+<a href="C:\Users\Vedika\Downloads\gaming.html">Quizzes</a>
+<a onclick="logout()">Logout</a>
+</nav>
+</header>
+
+<div class="container">
+<!-- Profile Info -->
+<div class="card">
+<h2>👤 My Profile</h2>
+<div class="profile-img-container">
+<img id="profilePic" src="C:\Users\Vedika\Downloads\WhatsApp_Image_2025-07-12_at_19.10.06_af39a012-removebg-preview-removebg-preview.png" alt="Profile Picture" onclick="changeProfilePic()"/>
+<input type="file" id="profileInput" style="display:none;" accept="image/*" onchange="updateProfilePic(event)"/>
+</div>
+<label>Name:</label>
+<input type="text" id="profileName" class="profile-input"/>
+<label>Email:</label>
+<input type="email" id="profileEmail" class="profile-input"/>
+<label>Grade/Class:</label>
+<input type="text" id="profileGrade" class="profile-input"/>
+<button class="btn" onclick="saveProfile()">Save Profile</button>
+</div>
+
+<!-- Statistics -->
+<div class="card">
+<h2>📊 My Statistics</h2>
+<div class="stats-container">
+<div class="stat-card">
+<h3 id="completedCourses">0</h3>
+<p>Completed Courses</p>
+<div class="progress-bar"><div class="progress" id="coursesProgress" style="width:0%"></div></div>
+</div>
+<div class="stat-card">
+<h3 id="totalQuizzes">0</h3>
+<p>Quizzes Taken</p>
+<div class="progress-bar"><div class="progress" id="quizProgress" style="width:0%"></div></div>
+</div>
+<div class="stat-card">
+<h3 id="achievementsCount">0</h3>
+<p>Achievements</p>
+<div class="progress-bar"><div class="progress" id="achievementsProgress" style="width:0%"></div></div>
+</div>
+</div>
+</div>
+
+<!-- Attendance -->
+<div class="card">
+<h2>📌 Attendance</h2>
+<div class="stats-container" id="attendanceContainer">
+<!-- Classes attendance will render dynamically -->
+</div>
+</div>
+
+<!-- Settings -->
+<div class="card">
+<h2>⚙️ Settings</h2>
+<div class="setting-label">Dark Theme
+<label class="setting-toggle">
+<input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+<span class="slider"></span>
+</label>
+</div>
+<label>Change Password:</label>
+<input type="password" id="profilePassword" class="profile-input"/>
+<button class="btn" onclick="changePassword()">Update Password</button>
+</div>
+</div>
+
+<footer>Powered by Umeed © 2025</footer>
+
+<script>
+// --- Offline Navigation ---
+function navigate(section){ alert("Navigating to " + section + " (offline demo)"); }
+function logout(){ alert("You have logged out (offline)"); }
+
+// --- Profile Data ---
+const profileData={
+  name: localStorage.getItem("profileName") || "Student Name",
+  email: localStorage.getItem("profileEmail") || "student@example.com",
+  grade: localStorage.getItem("profileGrade") || "Grade 6",
+  pic: localStorage.getItem("profilePic") || "default.png",
+  password: localStorage.getItem("profilePassword") || "123456",
+  completedCourses: parseInt(localStorage.getItem("completedCourses"))||3,
+  totalQuizzes: parseInt(localStorage.getItem("totalQuizzes"))||5,
+  achievements: parseInt(localStorage.getItem("achievements"))||4
+};
+
+// Render Profile Info
+document.getElementById("profileName").value = profileData.name;
+document.getElementById("profileEmail").value = profileData.email;
+document.getElementById("profileGrade").value = profileData.grade;
+document.getElementById("profilePic").src = profileData.pic;
+
+// Save Profile
+function saveProfile(){
+  profileData.name=document.getElementById("profileName").value;
+  profileData.email=document.getElementById("profileEmail").value;
+  profileData.grade=document.getElementById("profileGrade").value;
+  localStorage.setItem("profileName", profileData.name);
+  localStorage.setItem("profileEmail", profileData.email);
+  localStorage.setItem("profileGrade", profileData.grade);
+  alert("Profile saved offline!");
+}
+
+// Profile Picture
+function changeProfilePic(){ document.getElementById("profileInput").click(); }
+function updateProfilePic(event){
+  const file = event.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      document.getElementById("profilePic").src = e.target.result;
+      localStorage.setItem("profilePic", e.target.result);
+    }
+    reader.readAsDataURL(file);
+  }
+}
+
+// --- Statistics ---
+function renderStats(){
+  document.getElementById("completedCourses").innerText = profileData.completedCourses;
+  document.getElementById("totalQuizzes").innerText = profileData.totalQuizzes;
+  document.getElementById("achievementsCount").innerText = profileData.achievements;
+  document.getElementById("coursesProgress").style.width = (profileData.completedCourses/10*100)+"%";
+  document.getElementById("quizProgress").style.width = (profileData.totalQuizzes/10*100)+"%";
+  document.getElementById("achievementsProgress").style.width = (profileData.achievements/10*100)+"%";
+}
+renderStats();
+
+// --- Attendance Data ---
+const attendanceData = JSON.parse(localStorage.getItem("attendanceData")) || [
+  {className:"Science", total:20, attended:18},
+  {className:"Math", total:22, attended:20},
+  {className:"Coding", total:15, attended:12},
+];
+function renderAttendance(){
+  const container = document.getElementById("attendanceContainer");
+  container.innerHTML="";
+  attendanceData.forEach((c)=>{
+    const percent = Math.round((c.attended/c.total)*100);
+    const div = document.createElement("div");
+    div.className="stat-card";
+    div.innerHTML=`<h3>${c.className}</h3>
+      <p>${c.attended}/${c.total} classes</p>
+      <div class="progress-bar"><div class="progress" style="width:0%;background:#FF5722"></div></div>
+      <p>${percent}% Attendance</p>`;
+    container.appendChild(div);
+    setTimeout(()=>{ div.querySelector(".progress").style.width=percent+"%"; },200);
+  });
+}
+renderAttendance();
+
+// --- Settings ---
+function toggleTheme(){
+  if(document.getElementById("themeToggle").checked){
+    document.body.style.background="#222"; document.body.style.color="#000000";
+  }else{ document.body.style.background="#f9f9f9"; document.body.style.color="#222"; }
+}
+function changePassword(){
+  const pwd = document.getElementById("profilePassword").value;
+  if(pwd.length<4){ alert("Password too short!"); return; }
+  profileData.password = pwd;
+  localStorage.setItem("profilePassword",pwd);
+  alert("Password updated offline!");
+}
+</script>
+</body>
+</html>

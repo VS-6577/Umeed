@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Periodic Table Memory Game</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #FFD600;
+    }
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .card {
+      width: 100px;
+      height: 100px;
+      background: #fff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: background 0.3s;
+    }
+    .card.flipped {
+      background: #FFD600;
+      color: #000;
+    }
+    .card.matched {
+      background: #4CAF50;
+      color: white;
+      cursor: default;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    #langBtn {
+      margin-top: 10px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      background: #FFD600;
+      color: #1a1a1a;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #langBtn:hover { background: #fce047; }
+  </style>
+</head>
+<body>
+
+  <h1 id="title">Periodic Table Memory Game</h1>
+  <button id="langBtn">Switch to Odia</button>
+  <p id="instructions">Match the element symbols with their names!</p>
+  <div class="game-board" id="gameBoard"></div>
+  <p id="status"></p>
+
+  <script>
+    // 🔤 Translations
+    const translations = {
+      english: {
+        title: "Periodic Table Memory Game",
+        instructions: "Match the element symbols with their names!",
+        win: "🎉 Congratulations! You matched all pairs!",
+        switchBtn: "Switch to Odia",
+        elements: [
+          { symbol: "H", name: "Hydrogen" },
+          { symbol: "O", name: "Oxygen" },
+          { symbol: "Na", name: "Sodium" },
+          { symbol: "Cl", name: "Chlorine" },
+          { symbol: "C", name: "Carbon" },
+          { symbol: "N", name: "Nitrogen" }
+        ]
+      },
+      odia: {
+        title: "ପିରିଅଡିକ୍ ଟେବୁଲ୍ ସ୍ମୃତି ଖେଳ",
+        instructions: "ଉପାଦାନର ସଂକେତକୁ ତାହାର ନାମ ସହିତ ମେଳାନ୍ତୁ!",
+        win: "🎉 ଅଭିନନ୍ଦନ! ଆପଣ ସମସ୍ତ ଯୁଗଳକୁ ମେଳାଇଛନ୍ତି!",
+        switchBtn: "Switch to English",
+        elements: [
+          { symbol: "H", name: "ହାଇଡ୍ରୋଜେନ୍" },
+          { symbol: "O", name: "ଅକ୍ସିଜେନ୍" },
+          { symbol: "Na", name: "ସୋଡିୟମ୍" },
+          { symbol: "Cl", name: "କ୍ଲୋରିନ୍" },
+          { symbol: "C", name: "କାର୍ବନ୍" },
+          { symbol: "N", name: "ନାଇଟ୍ରୋଜେନ୍" }
+        ]
+      }
+    };
+
+    let currentLang = "english";
+    let elements = translations[currentLang].elements;
+
+    // Create deck
+    function buildDeck() {
+      let deck = [];
+      elements.forEach(el => {
+        deck.push({ type: "symbol", value: el.symbol, pair: el.name });
+        deck.push({ type: "name", value: el.name, pair: el.symbol });
+      });
+      return deck.sort(() => Math.random() - 0.5);
+    }
+
+    let deck = buildDeck();
+    const gameBoard = document.getElementById("gameBoard");
+    let flippedCards = [];
+    let matchedPairs = 0;
+
+    function createBoard() {
+      gameBoard.innerHTML = "";
+      deck.forEach(card => {
+        const cardElement = document.createElement("div");
+        cardElement.classList.add("card");
+        cardElement.setAttribute("data-value", card.value);
+        cardElement.setAttribute("data-pair", card.pair);
+        cardElement.innerText = "?"; // hidden by default
+
+        cardElement.addEventListener("click", () => flipCard(cardElement));
+        gameBoard.appendChild(cardElement);
+      });
+    }
+
+    function flipCard(card) {
+      if (card.classList.contains("flipped") || card.classList.contains("matched")) return;
+
+      card.classList.add("flipped");
+      card.innerText = card.getAttribute("data-value");
+      flippedCards.push(card);
+
+      if (flippedCards.length === 2) {
+        setTimeout(checkMatch, 800);
+      }
+    }
+
+    function checkMatch() {
+      const [card1, card2] = flippedCards;
+
+      if (card1.getAttribute("data-pair") === card2.getAttribute("data-value") &&
+          card2.getAttribute("data-pair") === card1.getAttribute("data-value")) {
+        card1.classList.add("matched");
+        card2.classList.add("matched");
+        matchedPairs++;
+        if (matchedPairs === elements.length) {
+          document.getElementById("status").innerText = translations[currentLang].win;
+        }
+      } else {
+        card1.classList.remove("flipped");
+        card1.innerText = "?";
+        card2.classList.remove("flipped");
+        card2.innerText = "?";
+      }
+
+      flippedCards = [];
+    }
+
+    // 🔘 Language Switch
+    document.getElementById("langBtn").addEventListener("click", () => {
+      currentLang = currentLang === "english" ? "odia" : "english";
+      elements = translations[currentLang].elements;
+      deck = buildDeck();
+      matchedPairs = 0;
+      flippedCards = [];
+      document.getElementById("title").innerText = translations[currentLang].title;
+      document.getElementById("instructions").innerText = translations[currentLang].instructions;
+      document.getElementById("status").innerText = "";
+      document.getElementById("langBtn").innerText = translations[currentLang].switchBtn;
+      createBoard();
+    });
+
+    // Start
+    document.getElementById("langBtn").innerText = translations[currentLang].switchBtn;
+    createBoard();
+  </script>
+
+</body>
+</html>

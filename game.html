@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>STEM Games</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #a8edea, #fed6e3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .card h3 { 
+      margin-top: 0; 
+      color: #f39c12; 
+    }
+
+    .card p { 
+      margin: 10px 0; 
+    }
+
+    .play-link {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 8px;
+      background: #f39c12;
+      color: white;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .play-link:hover { 
+      background: #d35400; 
+    }
+  </style>
+</head>
+<body>
+  <h1>🕹️ Fun STEM Games</h1>
+  <div class="categories">
+    <div class="card">
+      <h3>Memory Game</h3>
+      <p>A fun memory matching game</p>
+      <a href="E:\Documents\UMEED\memorygame.html" class="play-link" target="_blank">Play</a>
+    </div>
+    <div class="card">
+      <h3>Trigo Challenge</h3>
+      <p>Guess the formula and earn points</p>
+      <a href="C:\Users\Vedika\Downloads\game2_advTiro.html" class="play-link" target="_blank">Play</a>
+    </div>
+    <div class="card">
+      <h3>Match Bingo</h3>
+      <p>Match the pairs</p>
+      <a href="E:\Documents\match.html" class="play-link" target="_blank">Play</a>
+    </div>
+    <div class="card">
+      <h3>Word Fill</h3>
+      <p>Fill the words as fast as you can!</p>
+      <a href="E:\Documents\fillin.html" class="play-link" target="_blank">Play</a>
+    </div>
+    <div class="card">
+      <h3>Logic Maze</h3>
+      <p>Navigate through tricky logic mazes!</p>
+      <a href="C:\Users\Vedika\Downloads\LogicMazeRun.html" class="play-link" target="_blank">Play</a>
+    </div>
+    <div class="card">
+      <h3>Number Hunt</h3>
+      <p>Find hidden numbers in puzzles!</p>
+      <a href="E:\Documents\numberhunt.html" class="play-link" target="_blank">Play</a>
+    </div>
+    <div class="card">
+      <h3>Science Teasers</h3>
+      <p>Play with chemical equations</p>
+      <a href="C:\Users\Vedika\Downloads\Science Teaser.html" class="play-link" target="_blank">Play</a>
+    </div>
+  </div>
+</body>
+</html>
