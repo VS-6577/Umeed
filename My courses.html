@@ -46,30 +46,14 @@
     .card:hover {
       transform: translateY(-5px);
     }
-   /* Profile Image */
-.profile-img-container {
-  text-align:center;
-  margin-bottom:15px;
-}
-.profile-img-container img {
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  object-fit:cover;
-  border:3px solid #FFD700;
-  cursor:pointer;
-  transition: transform 0.3s;
-}
-.profile-img-container img:hover { transform: scale(1.05); }
-/* Inputs */
-.profile-input {
-  width:100%;
-  padding:8px 10px;
-  margin:6px 0;
-  border-radius:8px;
-  border:1px solid #ccc;
-  font-size:14px;
-}
+    .profile {
+      text-align: center;
+    }
+    .profile img {
+      width: 100px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
     .progress-bar {
       background: #eee;
       border-radius: 20px;
@@ -108,9 +92,8 @@
   <div class="dashboard">
     <!-- Profile Section -->
     <div class="card profile">
-<img id="profilePic" src="WhatsApp_Image_2025-07-12_at_19.10.06_af39a012-removebg-preview-removebg-preview.png" alt="Profile Picture" onclick="changeProfilePic()"/>
-<input type="file" id="profileInput" style="display:none;" accept="image/*" onchange="updateProfilePic(event)"/>
-</div>
+      <img src="WhatsApp_Image_2025-07-12_at_19.10.06_af39a012-removebg-preview-removebg-preview.png" alt="Student Avatar" onclick="changeProfilePic()"/>
+      <input type="file" id="profileInput" style="display:none;" accept="image/*" onchange="updateProfilePic(event)"/>
       <h3>Vedika Singh</h3>
       <p><b>Class 10</b>, Section A</p>
       <p><b>Roll No:</b> 23</p>
@@ -186,9 +169,6 @@
 </body>
 
 </html>
-
-
-
 
 
 
